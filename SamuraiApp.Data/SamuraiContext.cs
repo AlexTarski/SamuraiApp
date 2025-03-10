@@ -14,8 +14,9 @@ namespace SamuraiApp.Data
             optionsBuilder.UseSqlServer(
                 "Data Source= (localdb)\\MSSQLLocalDB; Initial Catalog=SamuraiAppData",
                 options => options.MinBatchSize(100))
-                .LogTo(Console.WriteLine, new[] {DbLoggerCategory.Database.Command.Name},
-                            Microsoft.Extensions.Logging.LogLevel.Information )
+                .LogTo(Console.WriteLine, new[] {DbLoggerCategory.Database.Command.Name,
+                                                                        DbLoggerCategory.Database.Transaction.Name},
+                            Microsoft.Extensions.Logging.LogLevel.Debug )
                 .EnableSensitiveDataLogging();
         }
 
@@ -29,6 +30,8 @@ namespace SamuraiApp.Data
                  bs => bs.HasOne<Samurai>().WithMany())
                 .Property(bs => bs.DateJoined)
                 .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Horse>().ToTable("Horses");
         }
     }
 }
