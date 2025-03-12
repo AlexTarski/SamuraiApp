@@ -45,7 +45,13 @@ static class Program
         //AddNewHorseToSamuraiUsingId();
         //AddNewHorseToSamuraiObject();
         //AddNewHorseToDisconnectedSamuraiObject();
-        ReplaceAHorse();
+        //ReplaceAHorse();
+        //QuerySamuraiBattleStats();
+        //QueryUsingRawSql();
+        //QueryRelatedUsingRawSql();
+        //QueryUsingRawSqlWithInterpolation();
+        //QueryUsingFromSqlRawStoredProc();
+        ExecuteSomeRawSql();
         Console.Write("Press any key...");
         Console.ReadKey();
     }
@@ -348,6 +354,41 @@ static class Program
             .Where(s => s.Horse != null)
             .Select(s => new { Horse = s.Horse, Samurai = s })
             .ToList();
+    }
+    private static void QuerySamuraiBattleStats()
+    {
+        //var stats = _context.SamuraiBattleStats.ToList();
+        var firststat = _context.SamuraiBattleStats.FirstOrDefault();
+        var sampsonState = _context.SamuraiBattleStats
+            .FirstOrDefault(b => b.Name == "SampsonSan");
+    }
+    private static void QueryUsingRawSql()
+    {
+        var samurais = _context.Samurais.FromSqlRaw("Select * from Samurais").ToList();
+    }
+    private static void QueryRelatedUsingRawSql()
+    {
+        var samurais = _context.Samurais.FromSqlRaw(
+            "Select Id, Name from Samurais").Include(s => s.Quotes).ToList();
+    }
+    private static void QueryUsingRawSqlWithInterpolation()
+    {
+        string name = "Kikuchyo";
+        var samurais = _context.Samurais
+            .FromSqlInterpolated($"Select * from Samurais Where Name = {name}")
+            .ToList();
+    }
+    private static void QueryUsingFromSqlRawStoredProc()
+    {
+        var text = "Happy";
+        var samurais = _context.Samurais.FromSqlRaw(
+            "EXEC dbo.SamuraisWhoSaidAWord {0}", text).ToList();
+    }
+    private static void ExecuteSomeRawSql()
+    {
+        var samuraiId = 2;
+        _context.Database
+            .ExecuteSqlRaw("EXEC DeleteQuotesForSamurai {0}", samuraiId);
     }
     public struct IdAndName
     {

@@ -8,6 +8,7 @@ namespace SamuraiApp.Data
         public DbSet<Samurai> Samurais { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Battle> Battles { get; set; }
+        public DbSet<SamuraiBattleStat> SamuraiBattleStats { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,7 +17,7 @@ namespace SamuraiApp.Data
                 options => options.MinBatchSize(100))
                 .LogTo(Console.WriteLine, new[] {DbLoggerCategory.Database.Command.Name,
                                                                         DbLoggerCategory.Database.Transaction.Name},
-                            Microsoft.Extensions.Logging.LogLevel.Debug )
+                            Microsoft.Extensions.Logging.LogLevel.Information)
                 .EnableSensitiveDataLogging();
         }
 
@@ -32,6 +33,7 @@ namespace SamuraiApp.Data
                 .HasDefaultValueSql("getdate()");
 
             modelBuilder.Entity<Horse>().ToTable("Horses");
+            modelBuilder.Entity<SamuraiBattleStat>().HasNoKey().ToView("SamuraiBattleStats");
         }
     }
 }
